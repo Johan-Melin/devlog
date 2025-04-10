@@ -1,21 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from '@/lib/firebase/auth';
+import { useAuth } from "@/context/AuthContext";
 import Link from 'next/link';
 
 export default function UserCheck() {
-  const [user, setUser] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const { user, loading } = useAuth();
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white">
