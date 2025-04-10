@@ -9,7 +9,7 @@ import {
     UserCredential,
     NextOrObserver
   } from 'firebase/auth';
-  import { app } from '../firebase';
+  import { app } from './config';
   
   // Initialize Firebase Auth
   const auth = getAuth(app);
@@ -61,3 +61,4 @@ import {
   
   // Export auth instance
   export { auth };
+  export type { User };
