@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { app } from '@/app/lib/firebase';
+import { app } from '@/lib/firebase';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 export default function FirebaseTest() {

@@ -6,7 +6,7 @@ import {
   signInWithEmail, 
   createUserWithEmail, 
   signOut 
-} from "@/app/lib/firebase/auth";
+} from "@/lib/firebase/auth";
 
 export default function AuthComponent() {
   const [user, setUser] = useState<unknown>(null);

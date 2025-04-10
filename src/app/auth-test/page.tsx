@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from '@/app/lib/firebase/auth';
+import { onAuthStateChanged } from '@/lib/firebase/auth';
 import Link from 'next/link';
 
 export default function UserCheck() {
