@@ -1,4 +1,4 @@
-import AuthComponent from "@/components/AuthComponent";
+import AuthForm from "@/components/AuthForm";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-8 text-center">DevLog App</h1>
         
         <div className="mb-8">
-          <AuthComponent />
+          <AuthForm />
         </div>
         
         <p className="text-center">
