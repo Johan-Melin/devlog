@@ -1,55 +1,83 @@
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, getDocs, deleteDoc } from 'firebase/firestore';
 import { app } from './config'; 
+import { Project } from '@/types/project';
 
 // Initialize Firestore
 const db = getFirestore(app);
 
-// User profile functions
-interface UserProfileData {
-  name: string;
-  email: string;
-  age?: number; // Example optional field
-  [key: string]: unknown; // Allow additional fields if necessary
-}
-
-export async function createUserProfile(userId: string, data: UserProfileData) {
+// Project functions
+export async function createProject(userId: string, projectData: Omit<Project, 'id' | 'createdAt'>) {
   try {
-    await setDoc(doc(db, 'users', userId), {
-      ...data,
+    // Generate a new document reference with auto-ID
+    const projectRef = doc(collection(db, 'users', userId, 'projects'));
+    
+    // Project with complete data
+    const newProject = {
+      ...projectData,
+      id: projectRef.id,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    return true;
+    };
+    
+    // Save to Firestore
+    await setDoc(projectRef, newProject);
+    
+    // Return the complete project
+    return newProject;
   } catch (error) {
-    console.error('Error creating user profile:', error);
-    return false;
+    console.error('Error creating project:', error);
+    throw error;
   }
 }
 
-export async function getUserProfile(userId: string) {
+export async function getProject(userId: string, projectId: string) {
   try {
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    if (userDoc.exists()) {
-      return { id: userDoc.id, ...userDoc.data() };
+    const projectDoc = await getDoc(doc(db, 'users', userId, 'projects', projectId));
+    
+    if (projectDoc.exists()) {
+      return projectDoc.data() as Project;
     } else {
       return null;
     }
   } catch (error) {
-    console.error('Error getting user profile:', error);
-    return null;
+    console.error('Error getting project:', error);
+    throw error;
   }
 }
 
-export async function updateUserProfile(userId: string, data: Partial<UserProfileData>) {
+export async function updateProject(userId: string, projectId: string, data: Partial<Omit<Project, 'id' | 'createdAt'>>) {
   try {
-    await updateDoc(doc(db, 'users', userId), {
-      ...data,
-      updatedAt: new Date(),
-    });
+    await updateDoc(doc(db, 'users', userId, 'projects', projectId), data);
     return true;
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    return false;
+    console.error('Error updating project:', error);
+    throw error;
+  }
+}
+
+export async function deleteProject(userId: string, projectId: string) {
+  try {
+    await deleteDoc(doc(db, 'users', userId, 'projects', projectId));
+    return true;
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw error;
+  }
+}
+
+export async function getUserProjects(userId: string) {
+  try {
+    const projectsQuery = query(collection(db, 'users', userId, 'projects'));
+    const querySnapshot = await getDocs(projectsQuery);
+    
+    const projects: Project[] = [];
+    querySnapshot.forEach(doc => {
+      projects.push(doc.data() as Project);
+    });
+    
+    return projects;
+  } catch (error) {
+    console.error('Error getting user projects:', error);
+    throw error;
   }
 }
 
