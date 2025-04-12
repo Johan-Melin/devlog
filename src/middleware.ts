@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/profile', '/projects'];
+  const protectedRoutes: string[] = [];
 
   // Check if the current route is protected
   const isProtectedRoute = protectedRoutes.some(route => 

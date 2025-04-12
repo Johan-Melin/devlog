@@ -1,5 +1,11 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { 
+  Firestore, 
+  initializeFirestore, 
+  CACHE_SIZE_UNLIMITED, 
+  persistentLocalCache,
+  persistentMultipleTabManager
+} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -22,7 +28,13 @@ if (!getApps().length) {
   firebaseApp = getApps()[0]; // if already initialized, use that one
 }
 
-// Initialize Firestore
-const db: Firestore = getFirestore(firebaseApp);
+// Initialize Firestore with persistent cache
+// This replaces the deprecated enableIndexedDbPersistence
+const db: Firestore = initializeFirestore(firebaseApp, {
+  localCache: persistentLocalCache({ 
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+    tabManager: persistentMultipleTabManager()
+  })
+});
 
 export { db }; 
