@@ -78,6 +78,10 @@ export const signUp = async (email: string, password: string, username: string):
 export const signIn = async (email: string, password: string): Promise<{ data: User | null; error: Error | null }> => {
   return handleAuthError(async () => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    // Set a session cookie on the client side
+    localStorage.setItem('session', 'true');
+    
     return userCredential.user;
   });
 };
@@ -86,6 +90,10 @@ export const signIn = async (email: string, password: string): Promise<{ data: U
 export const signOut = async (): Promise<{ success: boolean; error: Error | null }> => {
   return handleAuthError(async () => {
     await firebaseSignOut(auth);
+    
+    // Clear the session
+    localStorage.removeItem('session');
+    
     return true;
   }).then(result => ({
     success: result.data !== null,
