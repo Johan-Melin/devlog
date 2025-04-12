@@ -1,0 +1,72 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to
+Modularity and File Structure  
+Generate code that is modular and split across multiple files, each with a single responsibility (e.g., components, services, utilities). Avoid creating large, monolithic files that are difficult to maintain.  
+
+Organize files within the src/ directory using subfolders such as components/, pages/, services/, and utils/.  
+
+Use the import alias @/ for importing modules from src/ (e.g., import { MyComponent } from '@/components/MyComponent').
+
+Why? This ensures the codebase remains manageable, scalable, and easy to navigate, preventing the chaos of a single giant file.
+
+Next.js Best Practices  
+Adhere to Next.js App Router conventions by placing pages in the app/ directory and using layout files for shared UI.  
+
+Prefer React Server Components (RSC) for data fetching and rendering static content to leverage server-side capabilities.  
+
+Use the 'use client' directive only for components requiring client-side interactivity or Web APIs.
+
+Why? This optimizes performance and aligns with Next.js’s modern architecture.
+
+TypeScript Usage  
+Write all code in TypeScript with strict type checking enabled.  
+
+Define interfaces for component props, state, and API responses to ensure type safety across the application.
+
+Why? Type safety reduces runtime errors and improves code reliability.
+
+Styling with Tailwind CSS  
+Use Tailwind CSS classes exclusively for styling; avoid inline styles or custom CSS unless absolutely necessary.  
+
+Implement responsive design with Tailwind’s utility classes, following a mobile-first approach.
+
+Why? This promotes consistency, speeds up development, and ensures a responsive user experience.
+
+Firestore Integration  
+Encapsulate all Firestore interactions within dedicated service files (e.g., services/firestore.ts) to separate data logic from UI.  
+
+Implement error handling for all database operations using try-catch blocks and provide meaningful error messages.
+
+Why? This keeps the data layer clean and makes database operations reusable and robust.
+
+Authentication and Security  
+Use Firebase Authentication for user sign-up, sign-in, and session management.  
+
+Implement protected routes using middleware to restrict access to authenticated users only.  
+
+Ensure Firestore queries respect user permissions, filtering data based on ownership for private resources.
+
+Why? This secures the application and provides a seamless authentication experience.
+
+Performance Optimization  
+Utilize dynamic imports for non-critical components to enable code splitting and reduce initial load times.  
+
+Minimize client-side state by leveraging server-side rendering and data fetching where possible.
+
+Why? This enhances the application’s speed and scalability.
+
+Code Quality  
+Write clean, readable code with descriptive variable and function names.  
+
+Use early returns and avoid deeply nested conditionals to improve code clarity.
+
+Why? High-quality code is easier to understand, debug, and maintain.
+

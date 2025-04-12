@@ -1,0 +1,10 @@
+# .cursorrules
+- Generate modular code split across multiple files, each with a single responsibility (e.g., components, services, utilities). Avoid large, monolithic files.
+- Organize files in src/ with subfolders like components/, pages/, services/, and use @/ import alias.
+- Follow Next.js App Router conventions; prefer React Server Components, use 'use client' only when necessary.
+- Use TypeScript with strict type checking and define interfaces for props, state, and API responses.
+- Style with Tailwind CSS classes, avoiding inline styles, and ensure mobile-first responsiveness.
+- Encapsulate Firestore interactions in service files with error handling.
+- Use Firebase Authentication, protect routes with middleware, and filter Firestore data by permissions.
+- Optimize with dynamic imports and minimize client-side state.
+- Write clean code with descriptive names and early returns.
