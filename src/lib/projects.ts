@@ -75,6 +75,45 @@ export const createSlug = (name: string): string => {
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 };
 
+// Create a unique slug for a project
+const createUniqueSlug = async (uid: string, name: string): Promise<string> => {
+  // Create the base slug
+  const baseSlug = createSlug(name);
+  
+  // Check if the slug already exists for this user
+  const projectsRef = getUserProjectsRef(uid);
+  const q = query(projectsRef, where('slug', '==', baseSlug));
+  const querySnapshot = await getDocs(q);
+  
+  if (querySnapshot.empty) {
+    // Slug is unique, return it
+    return baseSlug;
+  }
+  
+  // Slug already exists, check for slugs with this base plus a number
+  const q2 = query(
+    projectsRef, 
+    where('slug', '>=', `${baseSlug}-`), 
+    where('slug', '<=', `${baseSlug}-\uf8ff`)
+  );
+  const querySnapshot2 = await getDocs(q2);
+  
+  // Extract all numeric suffixes and find the highest
+  const existingSlugs = querySnapshot2.docs.map(doc => doc.data().slug);
+  let maxNumber = 0;
+  
+  existingSlugs.forEach(slug => {
+    const match = slug.match(new RegExp(`^${baseSlug}-(\\d+)$`));
+    if (match && match[1]) {
+      const num = parseInt(match[1], 10);
+      if (num > maxNumber) maxNumber = num;
+    }
+  });
+  
+  // Return baseSlug-{next number}
+  return `${baseSlug}-${maxNumber + 1}`;
+};
+
 // Error handler wrapper
 const handleProjectError = async <T>(operation: () => Promise<T>): Promise<{ data: T | null; error: Error | null }> => {
   try {
@@ -106,6 +145,9 @@ export const projectService = {
       const projectsRef = getUserProjectsRef(user.uid);
       const projectRef = doc(projectsRef);
       
+      // Generate a unique slug
+      const uniqueSlug = await createUniqueSlug(user.uid, projectData.name);
+      
       const newProject: Project = {
         ...projectData,
         id: projectRef.id,
@@ -113,7 +155,7 @@ export const projectService = {
         ownerUid: user.uid,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        slug: createSlug(projectData.name)
+        slug: uniqueSlug
       };
       await setDoc(projectRef, newProject);
       
@@ -227,9 +269,13 @@ export const projectService = {
     return handleProjectError(async () => {
       const projectRef = getProjectRef(uid, projectId);
       
-      // If name is being updated, update the slug too
-      if (projectData.name) {
-        projectData.slug = createSlug(projectData.name);
+      // Get the current project for comparison
+      const currentProject = await getDoc(projectRef);
+      const currentData = currentProject.data() as Project;
+      
+      // If name is being updated and it's different from the current name, update the slug
+      if (projectData.name && projectData.name !== currentData.name) {
+        projectData.slug = await createUniqueSlug(uid, projectData.name);
       }
       
       const updateData = {

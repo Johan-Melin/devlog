@@ -390,6 +390,38 @@ export default function ProjectDetailPage() {
                 )}
               </div>
               
+              {/* Shareable Link Section */}
+              <div className="bg-blue-50 border border-blue-200 px-4 py-3 rounded mb-6">
+                <div className="flex justify-between items-center">
+                  <p className="font-medium text-blue-800">Shareable Link</p>
+                  <button 
+                    onClick={() => {
+                      const url = `${window.location.origin}/projects/${project.id}`;
+                      navigator.clipboard.writeText(url);
+                      // Show temporary "Copied!" message
+                      const button = document.getElementById('copy-button');
+                      if (button) {
+                        const originalText = button.textContent;
+                        button.textContent = "Copied!";
+                        setTimeout(() => {
+                          button.textContent = originalText;
+                        }, 2000);
+                      }
+                    }}
+                    id="copy-button"
+                    className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                  >
+                    Copy URL
+                  </button>
+                </div>
+                <p className="text-blue-700 mt-1 text-sm break-all">
+                  {typeof window !== 'undefined' ? `${window.location.origin}/projects/${project.id}` : ''}
+                </p>
+                <p className="text-gray-600 mt-2 text-xs">
+                  Project ID: {project.id}
+                </p>
+              </div>
+              
               {/* Project Details */}
               <div className="mb-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-1">Details</h2>
