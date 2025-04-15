@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Profile() {
   const { userData } = useAuth();
@@ -56,13 +57,20 @@ export default function Profile() {
                   <p className="text-sm text-gray-600 mb-3">
                     Share your public profile to let others see your public projects:
                   </p>
-                  <div className="flex items-center">
-                    <code className="bg-gray-100 p-2 rounded-l text-sm flex-1 truncate">
-                      {typeof window !== 'undefined' ? `${window.location.origin}/${userData.username}` : ''}
-                    </code>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex-1 rounded-md border border-gray-300 shadow-sm focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                      <Link
+                        href={`/${userData.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full px-3 py-2 text-gray-700 hover:text-blue-600"
+                      >
+                        {typeof window !== 'undefined' ? `${window.location.origin}/${userData.username}` : ''}
+                      </Link>
+                    </div>
                     <button
                       onClick={copyProfileLink}
-                      className="bg-blue-600 text-white py-2 px-4 rounded-r hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
                     >
                       {copied ? "Copied!" : "Copy"}
                     </button>
