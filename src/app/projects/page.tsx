@@ -35,6 +35,9 @@ export default function ProjectsPage() {
     fetchProjects();
   }, [user]);
 
+  const activeProjects = projects.filter(p => !p.archived);
+  const archivedProjects = projects.filter(p => p.archived);
+
   return (
     <ProtectedRoute>
       <div className="max-w-5xl mx-auto">
@@ -70,66 +73,120 @@ export default function ProjectsPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <div 
-                key={project.id}
-                className={`bg-white rounded-lg shadow-sm border overflow-hidden ${
-                  project.archived ? 'opacity-75 border-gray-200' : 'border-gray-200 hover:border-blue-300'
-                } transition`}
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h2 className="text-lg font-semibold">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activeProjects.map((project) => (
+                <div 
+                  key={project.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-300 overflow-hidden transition"
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <h2 className="text-lg font-semibold">
+                        <Link 
+                          href={`/projects/${project.id}`} 
+                          className="hover:text-blue-600"
+                        >
+                          {project.name}
+                        </Link>
+                      </h2>
+                      <span 
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          project.isPublic 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-blue-100 text-blue-800'
+                        }`}
+                      >
+                        {project.isPublic ? 'Public' : 'Private'}
+                      </span>
+                    </div>
+                    
+                    {project.details && (
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {project.details}
+                      </p>
+                    )}
+                    
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+                      <span>
+                        Created: {project.createdAt ? new Date(project.createdAt.toDate()).toLocaleDateString() : 'N/A'}
+                      </span>
                       <Link 
                         href={`/projects/${project.id}`} 
-                        className={`hover:text-blue-600 ${project.archived ? 'text-gray-500' : ''}`}
+                        className="text-blue-600 hover:underline"
                       >
-                        {project.name}
+                        View Details →
                       </Link>
-                    </h2>
-                    <span 
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        project.isPublic 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}
-                    >
-                      {project.isPublic ? 'Public' : 'Private'}
-                    </span>
-                  </div>
-                  
-                  {project.details && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {project.details}
-                    </p>
-                  )}
-                  
-                  {project.archived && (
-                    <div className="bg-gray-100 px-3 py-2 text-sm rounded mb-3">
-                      <span className="font-medium">Archived</span>
-                      {project.archiveReason && (
-                        <p className="text-gray-600 text-xs mt-1">
-                          Reason: {project.archiveReason}
-                        </p>
-                      )}
                     </div>
-                  )}
-                  
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-xs text-gray-500">
-                    <span>
-                      Created: {project.createdAt ? new Date(project.createdAt.toDate()).toLocaleDateString() : 'N/A'}
-                    </span>
-                    <Link 
-                      href={`/projects/${project.id}`} 
-                      className="text-blue-600 hover:underline"
-                    >
-                      View Details →
-                    </Link>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {archivedProjects.length > 0 && (
+              <>
+                <div className="border-t border-gray-200 pt-8">
+                  <h2 className="text-xl font-semibold mb-6">Archived Projects</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {archivedProjects.map((project) => (
+                      <div 
+                        key={project.id}
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition opacity-75"
+                      >
+                        <div className="p-6">
+                          <div className="flex justify-between items-start mb-2">
+                            <h2 className="text-lg font-semibold">
+                              <Link 
+                                href={`/projects/${project.id}`} 
+                                className="text-gray-500 hover:text-blue-600"
+                              >
+                                {project.name}
+                              </Link>
+                            </h2>
+                            <span 
+                              className={`px-2 py-1 text-xs rounded-full ${
+                                project.isPublic 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-blue-100 text-blue-800'
+                              }`}
+                            >
+                              {project.isPublic ? 'Public' : 'Private'}
+                            </span>
+                          </div>
+                          
+                          {project.details && (
+                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                              {project.details}
+                            </p>
+                          )}
+                          
+                          <div className="bg-gray-100 px-3 py-2 text-sm rounded mb-3">
+                            <span className="font-medium">Archived</span>
+                            {project.archiveReason && (
+                              <p className="text-gray-600 text-xs mt-1">
+                                Reason: {project.archiveReason}
+                              </p>
+                            )}
+                          </div>
+                          
+                          <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+                            <span>
+                              Created: {project.createdAt ? new Date(project.createdAt.toDate()).toLocaleDateString() : 'N/A'}
+                            </span>
+                            <Link 
+                              href={`/projects/${project.id}`} 
+                              className="text-blue-600 hover:underline"
+                            >
+                              View Details →
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
