@@ -33,6 +33,7 @@ export interface Project {
   timeline?: string;
   archived?: boolean;
   archiveReason?: string;
+  status: 'active' | 'upcoming' | 'completed' | 'archived';
 }
 
 // Create a new Project object
@@ -61,7 +62,8 @@ export const createProjectObject = (
     estimatedTime: estimatedTime || '',
     availableTime: availableTime || '',
     timeline: timeline || '',
-    archived: false
+    archived: false,
+    status: 'active'
   };
 };
 
@@ -160,7 +162,7 @@ const getProjectRef = (uid: string, projectId: string): DocumentReference => {
 // Project service with CRUD operations
 export const projectService = {
   // Create a new project
-  createProject: async (user: User, projectData: Omit<Project, 'id' | 'ownerUid' | 'owner' | 'createdAt' | 'updatedAt'>): Promise<{ data: Project | null; error: Error | null }> => {
+  createProject: async (user: User, projectData: Omit<Project, 'id' | 'ownerUid' | 'owner' | 'createdAt' | 'updatedAt' | 'slug'>): Promise<{ data: Project | null; error: Error | null }> => {
     return handleProjectError(async () => {
       if (!user) throw new Error('User not authenticated');
       

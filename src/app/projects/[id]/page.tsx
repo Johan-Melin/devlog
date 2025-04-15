@@ -206,7 +206,11 @@ export default function ProjectDetailPage() {
     
     try {
       setIsArchiving(true);
-      const result = await projectService.archiveProject(user.uid, project.id, archiveReason);
+      const result = await projectService.updateProject(user.uid, project.id, {
+        status: 'archived',
+        archived: true,
+        archiveReason
+      });
       
       if (result.error) {
         setError(`Failed to archive project: ${result.error.message}`);
@@ -219,27 +223,6 @@ export default function ProjectDetailPage() {
     } catch (err) {
       console.error("Error archiving project:", err);
       setError("An unexpected error occurred while archiving the project.");
-    } finally {
-      setIsArchiving(false);
-    }
-  };
-
-  const handleUnarchive = async () => {
-    if (!user || !project) return;
-    
-    try {
-      setIsArchiving(true);
-      const result = await projectService.unarchiveProject(user.uid, project.id);
-      
-      if (result.error) {
-        setError(`Failed to unarchive project: ${result.error.message}`);
-      } else if (result.data) {
-        setProject(result.data);
-        showSaveSuccess();
-      }
-    } catch (err) {
-      console.error("Error unarchiving project:", err);
-      setError("An unexpected error occurred while unarchiving the project.");
     } finally {
       setIsArchiving(false);
     }
@@ -261,7 +244,7 @@ export default function ProjectDetailPage() {
             </h1>
           </div>
           
-          {!loading && project && !isEditing && (
+          {!loading && project && !isEditing && user && (
             <div className="flex space-x-3">
               <button
                 onClick={() => setIsEditing(true)}
@@ -281,17 +264,40 @@ export default function ProjectDetailPage() {
                 {saving ? "Saving..." : project.isPublic ? "Public" : "Private"}
               </button>
               <select
-                value={project.archived ? "archived" : "active"}
+                value={project.status}
                 onChange={async (e) => {
-                  if (e.target.value === "archived") {
+                  const newStatus = e.target.value as 'active' | 'upcoming' | 'completed' | 'archived';
+                  if (!user || !project) return;
+                  
+                  if (newStatus === 'archived') {
                     setShowArchiveModal(true);
                   } else {
-                    await handleUnarchive();
+                    try {
+                      setSaving(true);
+                      const result = await projectService.updateProject(user.uid, project.id, {
+                        status: newStatus,
+                        archived: false
+                      });
+                      
+                      if (result.error) {
+                        setError(`Failed to update status: ${result.error.message}`);
+                      } else if (result.data) {
+                        setProject(result.data);
+                        showSaveSuccess();
+                      }
+                    } catch (err) {
+                      console.error("Error updating status:", err);
+                      setError("An unexpected error occurred while updating the status.");
+                    } finally {
+                      setSaving(false);
+                    }
                   }
                 }}
                 className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="active">Active</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed</option>
                 <option value="archived">Archived</option>
               </select>
             </div>
