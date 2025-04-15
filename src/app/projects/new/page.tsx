@@ -80,7 +80,7 @@ export default function NewProjectPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
                 Project Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -88,7 +88,7 @@ export default function NewProjectPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="My Awesome Project"
                 required
                 disabled={loading}
@@ -97,14 +97,14 @@ export default function NewProjectPage() {
             
             {/* Project Status */}
             <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-900 mb-1">
                 Project Status
               </label>
               <select
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as 'active' | 'upcoming' | 'completed' | 'archived')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 disabled={loading}
               >
                 <option value="active">Active</option>
@@ -125,18 +125,18 @@ export default function NewProjectPage() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   disabled={loading}
                 />
-                <label htmlFor="isPublic" className="ml-2 block text-sm font-medium text-gray-700">
+                <label htmlFor="isPublic" className="ml-2 block text-sm font-medium text-gray-900">
                   Make this project public
                 </label>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-700">
                 Public projects can be viewed by anyone with your profile link.
               </p>
             </div>
             
             {/* Project Details */}
             <div>
-              <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="details" className="block text-sm font-medium text-gray-900 mb-1">
                 Project Details
               </label>
               <textarea
@@ -144,7 +144,7 @@ export default function NewProjectPage() {
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="Describe your project and its goals..."
                 disabled={loading}
               />
@@ -153,7 +153,7 @@ export default function NewProjectPage() {
             {/* Time Estimates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="estimatedTime" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="estimatedTime" className="block text-sm font-medium text-gray-900 mb-1">
                   Estimated Time
                 </label>
                 <input
@@ -161,14 +161,14 @@ export default function NewProjectPage() {
                   type="text"
                   value={estimatedTime}
                   onChange={(e) => setEstimatedTime(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                   placeholder="e.g., 2 weeks, 20 hours"
                   disabled={loading}
                 />
               </div>
               
               <div>
-                <label htmlFor="availableTime" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="availableTime" className="block text-sm font-medium text-gray-900 mb-1">
                   Available Time
                 </label>
                 <input
@@ -176,7 +176,7 @@ export default function NewProjectPage() {
                   type="text"
                   value={availableTime}
                   onChange={(e) => setAvailableTime(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                   placeholder="e.g., 5 hours/week"
                   disabled={loading}
                 />
@@ -185,7 +185,7 @@ export default function NewProjectPage() {
             
             {/* Timeline */}
             <div>
-              <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="timeline" className="block text-sm font-medium text-gray-900 mb-1">
                 Timeline
               </label>
               <input
@@ -193,7 +193,7 @@ export default function NewProjectPage() {
                 type="text"
                 value={timeline}
                 onChange={(e) => setTimeline(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="e.g., Complete by June 1st"
                 disabled={loading}
               />

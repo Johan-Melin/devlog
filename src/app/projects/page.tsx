@@ -44,7 +44,7 @@ export default function ProjectsPage() {
     <ProtectedRoute>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">My Projects</h1>
+          <h1 className="text-2xl font-bold text-white-900">My Projects</h1>
           <Link
             href="/projects/new"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
           <div className="space-y-8">
             {/* Active Projects */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Active Projects</h2>
+              <h2 className="text-lg font-medium text-white-900 mb-4">Active Projects</h2>
               {activeProjects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {activeProjects.map((project) => (
@@ -78,11 +78,11 @@ export default function ProjectsPage() {
                     >
                       <div className="p-4">
                         <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-gray-700">
                           {project.details?.substring(0, 100) || "No description"}
                         </p>
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-600">
                             Created {project.createdAt?.toDate().toLocaleDateString()}
                           </span>
                           <span className={`px-2 py-1 text-xs rounded-full ${
@@ -98,7 +98,7 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 p-4 text-center text-gray-500 rounded">
+                <div className="bg-gray-50 p-4 text-center text-gray-700 rounded">
                   <p>No active projects yet.</p>
                 </div>
               )}
@@ -106,7 +106,7 @@ export default function ProjectsPage() {
 
             {/* Upcoming Projects */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Projects</h2>
+              <h2 className="text-lg font-medium text-white-900 mb-4">Upcoming Projects</h2>
               {upcomingProjects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {upcomingProjects.map((project) => (
@@ -117,11 +117,11 @@ export default function ProjectsPage() {
                     >
                       <div className="p-4">
                         <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-gray-700">
                           {project.details?.substring(0, 100) || "No description"}
                         </p>
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-600">
                             Created {project.createdAt?.toDate().toLocaleDateString()}
                           </span>
                           <span className={`px-2 py-1 text-xs rounded-full ${
@@ -137,7 +137,7 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 p-4 text-center text-gray-500 rounded">
+                <div className="bg-gray-50 p-4 text-center text-gray-700 rounded">
                   <p>No upcoming projects yet.</p>
                 </div>
               )}
@@ -145,7 +145,7 @@ export default function ProjectsPage() {
 
             {/* Completed Projects */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Completed Projects</h2>
+              <h2 className="text-lg font-medium text-white-900 mb-4">Completed Projects</h2>
               {completedProjects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {completedProjects.map((project) => (
@@ -156,11 +156,11 @@ export default function ProjectsPage() {
                     >
                       <div className="p-4">
                         <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-gray-700">
                           {project.details?.substring(0, 100) || "No description"}
                         </p>
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-600">
                             Created {project.createdAt?.toDate().toLocaleDateString()}
                           </span>
                           <span className={`px-2 py-1 text-xs rounded-full ${
@@ -176,7 +176,7 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 p-4 text-center text-gray-500 rounded">
+                <div className="bg-gray-50 p-4 text-center text-gray-700 rounded">
                   <p>No completed projects yet.</p>
                 </div>
               )}
@@ -184,7 +184,7 @@ export default function ProjectsPage() {
 
             {/* Archived Projects */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Archived Projects</h2>
+              <h2 className="text-lg font-medium text-white-900 mb-4">Archived Projects</h2>
               {archivedProjects.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {archivedProjects.map((project) => (
@@ -195,11 +195,11 @@ export default function ProjectsPage() {
                     >
                       <div className="p-4">
                         <h3 className="text-lg font-medium text-gray-900">{project.name}</h3>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-gray-700">
                           {project.details?.substring(0, 100) || "No description"}
                         </p>
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-600">
                             Created {project.createdAt?.toDate().toLocaleDateString()}
                           </span>
                           <span className={`px-2 py-1 text-xs rounded-full ${
@@ -215,7 +215,7 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 p-4 text-center text-gray-500 rounded">
+                <div className="bg-gray-50 p-4 text-center text-gray-700 rounded">
                   <p>No archived projects yet.</p>
                 </div>
               )}
