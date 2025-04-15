@@ -280,22 +280,20 @@ export default function ProjectDetailPage() {
               >
                 {saving ? "Saving..." : project.isPublic ? "Public" : "Private"}
               </button>
-              {!project.archived ? (
-                <button
-                  onClick={() => setShowArchiveModal(true)}
-                  className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100"
-                >
-                  Archive
-                </button>
-              ) : (
-                <button
-                  onClick={handleUnarchive}
-                  disabled={isArchiving}
-                  className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100"
-                >
-                  {isArchiving ? "Unarchiving..." : "Unarchive"}
-                </button>
-              )}
+              <select
+                value={project.archived ? "archived" : "active"}
+                onChange={async (e) => {
+                  if (e.target.value === "archived") {
+                    setShowArchiveModal(true);
+                  } else {
+                    await handleUnarchive();
+                  }
+                }}
+                className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="active">Active</option>
+                <option value="archived">Archived</option>
+              </select>
             </div>
           )}
         </div>
