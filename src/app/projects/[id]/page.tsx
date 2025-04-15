@@ -37,6 +37,11 @@ export default function ProjectDetailPage() {
   const [slugValidationError, setSlugValidationError] = useState<string | null>(null);
   const [validatingSlug, setValidatingSlug] = useState(false);
 
+  // Add state for archiving
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [archiveReason, setArchiveReason] = useState("");
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+
   // Load project data
   useEffect(() => {
     async function fetchProject() {
@@ -196,6 +201,50 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const handleArchive = async () => {
+    if (!user || !project) return;
+    
+    try {
+      setIsArchiving(true);
+      const result = await projectService.archiveProject(user.uid, project.id, archiveReason);
+      
+      if (result.error) {
+        setError(`Failed to archive project: ${result.error.message}`);
+      } else if (result.data) {
+        setProject(result.data);
+        setShowArchiveModal(false);
+        setArchiveReason("");
+        showSaveSuccess();
+      }
+    } catch (err) {
+      console.error("Error archiving project:", err);
+      setError("An unexpected error occurred while archiving the project.");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleUnarchive = async () => {
+    if (!user || !project) return;
+    
+    try {
+      setIsArchiving(true);
+      const result = await projectService.unarchiveProject(user.uid, project.id);
+      
+      if (result.error) {
+        setError(`Failed to unarchive project: ${result.error.message}`);
+      } else if (result.data) {
+        setProject(result.data);
+        showSaveSuccess();
+      }
+    } catch (err) {
+      console.error("Error unarchiving project:", err);
+      setError("An unexpected error occurred while unarchiving the project.");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div className="max-w-3xl mx-auto">
@@ -231,6 +280,22 @@ export default function ProjectDetailPage() {
               >
                 {saving ? "Saving..." : project.isPublic ? "Public" : "Private"}
               </button>
+              {!project.archived ? (
+                <button
+                  onClick={() => setShowArchiveModal(true)}
+                  className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100"
+                >
+                  Archive
+                </button>
+              ) : (
+                <button
+                  onClick={handleUnarchive}
+                  disabled={isArchiving}
+                  className="px-3 py-1 border border-gray-300 text-gray-700 rounded hover:bg-gray-100"
+                >
+                  {isArchiving ? "Unarchiving..." : "Unarchive"}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -641,6 +706,47 @@ export default function ProjectDetailPage() {
                   <p>You haven&apos;t added any log entries yet.</p>
                   <p className="text-sm mt-1">Log entries will be available in a future update.</p>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showArchiveModal && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <h3 className="text-lg font-medium mb-4">Archive Project</h3>
+              <p className="text-gray-600 mb-4">
+                Are you sure you want to archive this project? You can unarchive it later.
+              </p>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Reason (optional)
+                </label>
+                <textarea
+                  value={archiveReason}
+                  onChange={(e) => setArchiveReason(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="Why are you archiving this project?"
+                  rows={3}
+                />
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => {
+                    setShowArchiveModal(false);
+                    setArchiveReason("");
+                  }}
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleArchive}
+                  disabled={isArchiving}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                >
+                  {isArchiving ? "Archiving..." : "Archive"}
+                </button>
               </div>
             </div>
           </div>
