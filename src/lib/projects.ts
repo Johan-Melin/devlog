@@ -114,6 +114,28 @@ const createUniqueSlug = async (uid: string, name: string): Promise<string> => {
   return `${baseSlug}-${maxNumber + 1}`;
 };
 
+// Check if a slug is already taken by another project
+// Returns true if the slug exists and doesn't belong to the specified project
+export const isSlugTaken = async (uid: string, slug: string, currentProjectId?: string): Promise<boolean> => {
+  const projectsRef = getUserProjectsRef(uid);
+  const q = query(projectsRef, where('slug', '==', slug));
+  const querySnapshot = await getDocs(q);
+  
+  if (querySnapshot.empty) {
+    // Slug doesn't exist at all
+    return false;
+  }
+  
+  // If a currentProjectId is provided, check if the slug belongs to that project
+  if (currentProjectId) {
+    // If the only project with this slug is the current one, it's not taken
+    return !querySnapshot.docs.every(doc => doc.id === currentProjectId);
+  }
+  
+  // If we got here, the slug exists for a different project
+  return true;
+};
+
 // Error handler wrapper
 const handleProjectError = async <T>(operation: () => Promise<T>): Promise<{ data: T | null; error: Error | null }> => {
   try {

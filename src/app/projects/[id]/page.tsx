@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { projectService, Project } from "@/lib/projects";
+import { getCurrentUserData } from "@/lib/auth";
+import { isSlugTaken } from "@/lib/projects";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Link from "next/link";
 
@@ -29,6 +31,11 @@ export default function ProjectDetailPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [username, setUsername] = useState<string>("");
+
+  // Add state for slug validation
+  const [slugValidationError, setSlugValidationError] = useState<string | null>(null);
+  const [validatingSlug, setValidatingSlug] = useState(false);
 
   // Load project data
   useEffect(() => {
@@ -142,6 +149,24 @@ export default function ProjectDetailPage() {
       setSaveSuccess(false);
     }, 3000);
   };
+
+  // Update shareable URL with username
+  useEffect(() => {
+    if (!project || !project.slug || !user) return;
+    
+    const updateShareableUrl = async () => {
+      try {
+        const userData = await getCurrentUserData();
+        if (userData.data && userData.data.username) {
+          setUsername(userData.data.username);
+        }
+      } catch (err) {
+        console.error("Error updating shareable URL:", err);
+      }
+    };
+    
+    updateShareableUrl();
+  }, [project, user]);
 
   // Delete project
   const handleDelete = async () => {
@@ -394,31 +419,194 @@ export default function ProjectDetailPage() {
               <div className="bg-blue-50 border border-blue-200 px-4 py-3 rounded mb-6">
                 <div className="flex justify-between items-center">
                   <p className="font-medium text-blue-800">Shareable Link</p>
-                  <button 
-                    onClick={() => {
-                      const url = `${window.location.origin}/projects/${project.id}`;
-                      navigator.clipboard.writeText(url);
-                      // Show temporary "Copied!" message
-                      const button = document.getElementById('copy-button');
-                      if (button) {
-                        const originalText = button.textContent;
-                        button.textContent = "Copied!";
-                        setTimeout(() => {
-                          button.textContent = originalText;
-                        }, 2000);
-                      }
-                    }}
-                    id="copy-button"
-                    className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                  >
-                    Copy URL
-                  </button>
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={() => {
+                        // Toggle to edit mode if not already editing slug
+                        const linkContainer = document.getElementById('link-container');
+                        const slugEditor = document.getElementById('slug-editor');
+                        if (linkContainer && slugEditor) {
+                          linkContainer.classList.toggle('hidden');
+                          slugEditor.classList.toggle('hidden');
+                          // If showing editor, focus it and select all text
+                          if (!slugEditor.classList.contains('hidden')) {
+                            const input = slugEditor.querySelector('input');
+                            if (input) {
+                              input.focus();
+                              input.select();
+                            }
+                          }
+                        }
+                      }}
+                      className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if (!user || !project || !user.uid) return;
+                        
+                        // Get the current user's data to access the username
+                        const getShareableUrl = async () => {
+                          try {
+                            const userData = await getCurrentUserData();
+                            if (userData.data && userData.data.username && project.slug) {
+                              const url = `${window.location.origin}/${userData.data.username}/${project.slug}`;
+                              navigator.clipboard.writeText(url);
+                              // Show temporary "Copied!" message
+                              const button = document.getElementById('copy-button');
+                              if (button) {
+                                const originalText = button.textContent;
+                                button.textContent = "Copied!";
+                                setTimeout(() => {
+                                  button.textContent = originalText;
+                                }, 2000);
+                              }
+                            }
+                          } catch (err) {
+                            console.error("Error getting shareable URL:", err);
+                          }
+                        };
+                        
+                        getShareableUrl();
+                      }}
+                      id="copy-button"
+                      className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                    >
+                      Copy URL
+                    </button>
+                  </div>
                 </div>
-                <p className="text-blue-700 mt-1 text-sm break-all">
-                  {typeof window !== 'undefined' ? `${window.location.origin}/projects/${project.id}` : ''}
-                </p>
-                <p className="text-gray-600 mt-2 text-xs">
-                  Project ID: {project.id}
+                
+                {/* Interactive link container */}
+                <div id="link-container" className="mt-1">
+                  <a 
+                    href={username && project?.slug ? 
+                      `${window.location.origin}/${username}/${project.slug}` : '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-700 text-sm hover:underline break-all"
+                  >
+                    <span id="shareable-url">
+                      {username && project?.slug ? 
+                        `${window.location.origin}/${username}/${project.slug}` : ''}
+                    </span>
+                  </a>
+                </div>
+                
+                {/* Slug editor (hidden by default) */}
+                <div id="slug-editor" className="mt-1 hidden">
+                  <div className="flex items-center">
+                    <span className="text-gray-600 mr-1 text-sm">
+                      {typeof window !== 'undefined' ? 
+                        `${window.location.origin}/[username]/` : ''}
+                    </span>
+                    <input 
+                      type="text" 
+                      defaultValue={project?.slug || ''}
+                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                      aria-label="Edit slug"
+                      onChange={() => setSlugValidationError(null)}
+                    />
+                    <div className="flex space-x-1 ml-2">
+                      <button
+                        onClick={() => {
+                          const linkContainer = document.getElementById('link-container');
+                          const slugEditor = document.getElementById('slug-editor');
+                          if (linkContainer && slugEditor) {
+                            // Hide editor and show link again
+                            linkContainer.classList.remove('hidden');
+                            slugEditor.classList.add('hidden');
+                            setSlugValidationError(null);
+                          }
+                        }}
+                        className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const input = document.querySelector('#slug-editor input') as HTMLInputElement;
+                          const newSlug = input?.value;
+                          
+                          if (!user || !project || !newSlug) return;
+                          
+                          // Validate slug format
+                          if (!/^[a-z0-9-]+$/.test(newSlug)) {
+                            setSlugValidationError("Slug can only contain lowercase letters, numbers, and hyphens");
+                            return;
+                          }
+                          
+                          try {
+                            setValidatingSlug(true);
+                            setSlugValidationError(null);
+                            
+                            // Check if slug is already taken
+                            const slugExists = await isSlugTaken(user.uid, newSlug, project.id);
+                            
+                            if (slugExists) {
+                              setSlugValidationError("This slug is already in use by another project");
+                              setValidatingSlug(false);
+                              return;
+                            }
+                            
+                            setSaving(true);
+                            // Update the project with the new slug
+                            const result = await projectService.updateProject(user.uid, project.id, {
+                              slug: newSlug
+                            });
+                            
+                            if (result.error) {
+                              setError(`Failed to update slug: ${result.error.message}`);
+                            } else if (result.data) {
+                              // Update local state
+                              setProject(result.data);
+                              
+                              // Update the displayed URL
+                              const urlElement = document.getElementById('shareable-url');
+                              if (urlElement) {
+                                const userData = await getCurrentUserData();
+                                if (userData.data && userData.data.username) {
+                                  urlElement.textContent = `${window.location.origin}/${userData.data.username}/${newSlug}`;
+                                }
+                              }
+                              
+                              // Hide editor and show link
+                              const linkContainer = document.getElementById('link-container');
+                              const slugEditor = document.getElementById('slug-editor');
+                              if (linkContainer && slugEditor) {
+                                linkContainer.classList.remove('hidden');
+                                slugEditor.classList.add('hidden');
+                              }
+                              
+                              showSaveSuccess();
+                            }
+                          } catch (err) {
+                            console.error("Error updating slug:", err);
+                            setError("An unexpected error occurred while updating the slug.");
+                          } finally {
+                            setSaving(false);
+                            setValidatingSlug(false);
+                          }
+                        }}
+                        disabled={saving || validatingSlug}
+                        className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
+                      >
+                        {validatingSlug ? "Checking..." : saving ? "Saving..." : "Save"}
+                      </button>
+                    </div>
+                  </div>
+                  {slugValidationError && (
+                    <p className="text-xs text-red-500 mt-1">{slugValidationError}</p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Only use letters, numbers, and hyphens. No spaces or special characters.
+                  </p>
+                </div>
+                
+                <p className="text-gray-600 mt-2 text-xs flex justify-between">
+                  <span>Project ID: {project.id}</span>
+                  <span>Slug: {project.slug}</span>
                 </p>
               </div>
               
