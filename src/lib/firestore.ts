@@ -14,6 +14,7 @@ import {
   WhereFilterOp
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { UserData } from './auth';
 
 // Error handler wrapper
 const handleFirestoreError = async <T>(operation: () => Promise<T>): Promise<{ data: T | null; error: Error | null }> => {
@@ -113,6 +114,20 @@ export const firestoreService = {
       });
       
       return results;
+    });
+  },
+
+  getUserByUsername: async (username: string) => {
+    return handleFirestoreError(async () => {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        return null;
+      }
+      
+      return querySnapshot.docs[0].data() as UserData;
     });
   }
 }; 
