@@ -9,11 +9,14 @@ import { getCurrentUserData } from "@/lib/auth";
 import { UserData } from "@/lib/auth";
 import Link from "next/link";
 
+type ProjectStatus = 'active' | 'upcoming' | 'completed' | 'archived';
+
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [visibleStatuses, setVisibleStatuses] = useState<ProjectStatus[]>(['active', 'upcoming', 'completed', 'archived']);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -41,6 +44,10 @@ export default function ProjectsPage() {
 
     fetchProjects();
   }, []);
+
+  const toggleStatus = (status: ProjectStatus) => {
+    setVisibleStatuses([status]);
+  };
 
   const activeProjects = projects.filter(p => p.status === 'active');
   const upcomingProjects = projects.filter(p => p.status === 'upcoming');
@@ -72,8 +79,52 @@ export default function ProjectsPage() {
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Status Toggle Buttons */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              <button
+                onClick={() => toggleStatus('active')}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  visibleStatuses.includes('active')
+                    ? 'bg-indigo-100 text-indigo-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => toggleStatus('upcoming')}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  visibleStatuses.includes('upcoming')
+                    ? 'bg-indigo-100 text-indigo-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                Upcoming
+              </button>
+              <button
+                onClick={() => toggleStatus('completed')}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  visibleStatuses.includes('completed')
+                    ? 'bg-indigo-100 text-indigo-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                Completed
+              </button>
+              <button
+                onClick={() => toggleStatus('archived')}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  visibleStatuses.includes('archived')
+                    ? 'bg-indigo-100 text-indigo-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                Archived
+              </button>
+            </div>
+
             {/* Active Projects */}
-            {activeProjects.length > 0 && userData && (
+            {activeProjects.length > 0 && userData && visibleStatuses.includes('active') && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Active Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,7 +141,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Upcoming Projects */}
-            {upcomingProjects.length > 0 && userData && (
+            {upcomingProjects.length > 0 && userData && visibleStatuses.includes('upcoming') && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -107,7 +158,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Completed Projects */}
-            {completedProjects.length > 0 && userData && (
+            {completedProjects.length > 0 && userData && visibleStatuses.includes('completed') && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Completed Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -124,7 +175,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Archived Projects */}
-            {archivedProjects.length > 0 && userData && (
+            {archivedProjects.length > 0 && userData && visibleStatuses.includes('archived') && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Archived Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
