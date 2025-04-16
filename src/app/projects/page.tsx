@@ -73,7 +73,7 @@ export default function ProjectsPage() {
         ) : (
           <div className="space-y-8">
             {/* Active Projects */}
-            {activeProjects.length > 0 && (
+            {activeProjects.length > 0 && userData && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Active Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -81,7 +81,7 @@ export default function ProjectsPage() {
                     <ProjectCard
                       key={project.id}
                       project={project}
-                      username={userData?.username}
+                      username={userData.username}
                       showEditButton
                     />
                   ))}
@@ -90,7 +90,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Upcoming Projects */}
-            {upcomingProjects.length > 0 && (
+            {upcomingProjects.length > 0 && userData && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -98,7 +98,7 @@ export default function ProjectsPage() {
                     <ProjectCard
                       key={project.id}
                       project={project}
-                      username={userData?.username}
+                      username={userData.username}
                       showEditButton
                     />
                   ))}
@@ -107,7 +107,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Completed Projects */}
-            {completedProjects.length > 0 && (
+            {completedProjects.length > 0 && userData && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Completed Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,7 +115,7 @@ export default function ProjectsPage() {
                     <ProjectCard
                       key={project.id}
                       project={project}
-                      username={userData?.username}
+                      username={userData.username}
                       showEditButton
                     />
                   ))}
@@ -124,7 +124,7 @@ export default function ProjectsPage() {
             )}
 
             {/* Archived Projects */}
-            {archivedProjects.length > 0 && (
+            {archivedProjects.length > 0 && userData && (
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Archived Projects</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -132,7 +132,7 @@ export default function ProjectsPage() {
                     <ProjectCard
                       key={project.id}
                       project={project}
-                      username={userData?.username}
+                      username={userData.username}
                       showEditButton
                     />
                   ))}
